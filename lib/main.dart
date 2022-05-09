@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:core';
+import 'login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,19 +9,13 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  final bool loggedIn = false;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'App',
-      home: Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-        appBar: AppBar(
-          title: const Text('App'),
-        ),
-        body: const Center(
-          child: UserEntries(),
-        ),
-      ),
+      home: LoginPage()
     );
   }
 }
