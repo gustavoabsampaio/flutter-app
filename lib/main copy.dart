@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'dart:io';
@@ -42,7 +43,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   File _image = File('');
   int _a = 0;
+  int _navIndex = 0;
   
+  static const List<Widget> _widgetOptions = <Widget>[
+    UserEntries(),
+    Profile()
+  ];
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _navIndex = index;
+    });
+  }
+
   Future getImage(ImageSource source) async{
     var image = await _picker.pickImage(source:source);
     
@@ -53,19 +66,51 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
-  int _counter = 0;
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
+      body: Center(child: _widgetOptions.elementAt(_navIndex),),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Consumo'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+        ],
+        currentIndex: _navIndex,
+        selectedItemColor: Colors.white70,
+        onTap: _onTabTapped
+      ),
+    );
+  }
+}
+
+class Profile extends StatefulWidget {
+  const Profile({Key? key}) : super(key: key);
+
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile>{
+  File _image = File('');
+  int _a = 0;
+  Future getImage(ImageSource source) async{
+    var image = await _picker.pickImage(source:source);
+    
+    if (image != null){
+      setState(() {
+        _image=File(image.path);
+        _a++;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+  return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -130,21 +175,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     const SizedBox(
                       height: 10.0,
                     ),
-                    Text(
-                        "Você fumou: $_counter cigarros hoje"
-                      ),
-                    ]),
-              )
-                )]
+                  ]),
+                )
+              )]
             ),
-          ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-        
-      ), 
-      floatingActionButtonLocation:FloatingActionButtonLocation.centerFloat, 
-    );
+          );
   }
 }
