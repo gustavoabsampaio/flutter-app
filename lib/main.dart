@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'dart:core';
-import 'login_page.dart';
+import 'user_entries.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:async';
+import 'dart:io';
 
+final ImagePicker _picker = ImagePicker();
 void main() {
   runApp(const MyApp());
 }
@@ -9,93 +12,173 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  final bool loggedIn = false;
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'App',
-      home: LoginPage()
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: Color.fromARGB(255, 189, 2, 2),
+        fontFamily: 'Georgia',
+        textTheme: const TextTheme(
+          headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          headline6: TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic),
+          bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+        ),
+      ),
+      home: const MyHomePage(title: 'Titulo do app'),
     );
   }
 }
 
-class UserEntries extends StatefulWidget {
-  const UserEntries ({ Key? key }) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
+
+  final String title;
 
   @override
-  State<UserEntries> createState() => _UserEntriesState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _UserEntriesState extends State<UserEntries> {
-  final List<String> _entryList = ["entry 1", "entry 2", "entry 3", "entry 4"];
+class _MyHomePageState extends State<MyHomePage> {
+  File _image = File('');
+  int _a = 0;
+  int _navIndex = 0;
+  
+  static const List<Widget> _widgetOptions = <Widget>[
+    UserEntries(),
+    Profile()
+  ];
 
-  var _tapPosition;
+  void _onTabTapped(int index) {
+    setState(() {
+      _navIndex = index;
+    });
+  }
 
-  @override
-  void initState() {
-    super.initState();
-    _tapPosition = Offset(0.0, 0.0);
+  Future getImage(ImageSource source) async{
+    var image = await _picker.pickImage(source:source);
+    
+    if (image != null){
+      setState(() {
+        _image=File(image.path);
+        _a++;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {},
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: _entryList.length,
-            itemBuilder: (context, i) {
-              return GestureDetector(
-                onTapDown: _storeTapPosition,
-                onLongPress: () {
-                  _showPopupMenu();
-                },
-                child: Card (
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(3.0, 15.0, 3.0, 15.0),
-                        child: Text(_entryList[i]),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(child: _widgetOptions.elementAt(_navIndex),),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Consumo'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+        ],
+        currentIndex: _navIndex,
+        selectedItemColor: Colors.white,
+        onTap: _onTabTapped
+      ),
+    );
+  }
+}
+
+class Profile extends StatefulWidget {
+  const Profile({Key? key}) : super(key: key);
+
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile>{
+  File _image = File('');
+  int _a = 0;
+  Future getImage(ImageSource source) async{
+    var image = await _picker.pickImage(source:source);
+    
+    if (image != null){
+      setState(() {
+        _image=File(image.path);
+        _a++;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+  return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            GestureDetector(
+              onTap: (){
+                showModalBottomSheet<void>(context: context, 
+                builder: (BuildContext context) { 
+                  return SafeArea( 
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[ 
+                        ListTile( 
+                          leading: const Icon(Icons.camera), 
+                          title: const Text('Camera'), 
+                          onTap: () {
+                            getImage(ImageSource.camera);
+                            Navigator.pop(context);
+                          }, 
                         ),
-                    ]                  
+                         ListTile(
+                          leading: const Icon(Icons.image), 
+                          title: const Text('Gallery'),
+                          onTap: () {
+                            getImage(ImageSource.gallery); 
+                            Navigator.pop(context);
+                          },
+                        ),
+                    ]
                   )
+                );
+              }
+            ); 
+              },
+              child: CircleAvatar(
+                      backgroundColor: const Color.fromARGB(255, 99, 4, 4), 
+                      radius: 50.0,
+                        child:ClipOval( 
+                          child: _a==0
+                          ?Image.asset('assets/images/default')
+                          :Image.file(_image),
+                      ))
+                    
+            ),
+            Container(
+              width: double.infinity,
+              height: 350.0,
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    const Text(
+                      "Nome do Usuario",
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                  ]),
                 )
-              );
-            }
-          )
-        )
-
-      ]
-    );
-  }
-  
-  _showPopupMenu() async {
-    final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
-
-    await showMenu(
-      context: context, 
-      position: RelativeRect.fromRect(
-          _tapPosition & Size(40, 40),
-          Offset.zero & overlay.size
-        ),
-      items: [
-        const PopupMenuItem(
-          child: Text("Edit")
-        ),
-        const PopupMenuItem(
-          child: Text("Delete")
-        )
-      ]
-    );
-  }
-
-  void _storeTapPosition(TapDownDetails details) {
-    _tapPosition = details.globalPosition;
+              )]
+            ),
+          );
   }
 }

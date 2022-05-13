@@ -1,4 +1,4 @@
-import 'package:app/main%20copy.dart';
+import 'package:app/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 
