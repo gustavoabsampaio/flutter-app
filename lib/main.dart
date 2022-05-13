@@ -149,7 +149,7 @@ class _ProfileState extends State<Profile>{
                       radius: 50.0,
                         child:ClipOval( 
                           child: _a==0
-                          ?Image.asset('assets/images/default')
+                          ?Image.asset('assets/images/default.png')
                           :Image.file(_image),
                       ))
                     
@@ -173,12 +173,111 @@ class _ProfileState extends State<Profile>{
                       ),
                     ),
                     const SizedBox(
+                      height: 50.0,
+                    ),
+                    const Text(
+                      "Começou a fumar: xx/yy/zzzz",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(
                       height: 10.0,
                     ),
-                  ]),
+                    const Text(
+                      "Fumou pela ultima vez: xx/yy/zzzz",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 50.0,
+                    ),
+                    Card(
+                      margin: EdgeInsets.symmetric(horizontal: 15.0,vertical: 3.0),
+                      clipBehavior: Clip.antiAlias,
+                      elevation: 2.0,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 3.0,vertical: 15.0),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    "Decidiu parar:",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 3.0,
+                                  ),
+                                  Text(
+                                    "dd/mm/yyyy",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    "Progresso:",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 3.0,
+                                  ),
+                                  Text(
+                                    "xx%",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    "Dias sem fumar:",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 3.0,
+                                  ),
+                                  Text(
+                                    "n",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                   ),     
                 )
-              )]
-            ),
-          );
+              ]
+              ),
+            )
+          )]
+        ),
+      );
   }
 }
