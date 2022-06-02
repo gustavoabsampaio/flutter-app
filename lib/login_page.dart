@@ -14,21 +14,13 @@ class LoginPage extends StatelessWidget {
             const Image(image: AssetImage('assets/images/placeholder_logo.png')),
             ElevatedButton(
               onPressed: () => {
-                Navigator.pushReplacement(
-                  context, 
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => const MyApp())
-                  )
+                Navigator.pushNamedAndRemoveUntil(context, '/home', ModalRoute.withName('/home'))
               },
               child: Text("Login"),
             ),
             ElevatedButton(
               onPressed: () => {
-                Navigator.pushReplacement(
-                  context, 
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => const MyApp())
-                  )
+                Navigator.pushNamedAndRemoveUntil(context, '/home', ModalRoute.withName('/home'))
               },
               child: Text("Skip"),
             ),

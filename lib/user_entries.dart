@@ -24,32 +24,34 @@ class _UserEntriesState extends State<UserEntries> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Stack(
+    return Stack(
         children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: _entryList.length,
-              itemBuilder: (context, i) {
-                return GestureDetector(
-                  onTapDown: _storeTapPosition,
-                  onLongPress: () {
-                    _showPopupMenu();
-                  },
-                  child: Card (
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(3.0, 15.0, 3.0, 15.0),
-                          child: Text(_entryList[i]),
-                          ),
-                      ]                  
-                    )
-                  )
-                );
-              }
-            )
+          Column(
+            children:[
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: _entryList.length,
+                  itemBuilder: (context, i) {
+                    return GestureDetector(
+                      onTapDown: _storeTapPosition,
+                      onLongPress: () {
+                        _showPopupMenu();
+                      },
+                      child: Card (
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(3.0, 15.0, 3.0, 15.0),
+                              child: Text(_entryList[i]),
+                              ),
+                          ]                  
+                        )
+                      )
+                    );
+                  }
+                )
+              )]
           ),
           Container(
             padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.8, MediaQuery.of(context).size.height* 0.67, 0, 0),
@@ -121,7 +123,6 @@ class _UserEntriesState extends State<UserEntries> {
           ),
           
         ],        
-      )
     );
   }
   

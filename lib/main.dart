@@ -1,13 +1,26 @@
+import 'package:app/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'user_entries.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 final ImagePicker _picker = ImagePicker();
+
+Future<FirebaseApp> loadFirebase() async {
+  return await Firebase.initializeApp(
+    name: "flutter_app",
+    options: DefaultFirebaseOptions.currentPlatform
+  );
+}
 void main() {
   runApp(const MyApp());
 }
+
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -18,7 +31,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Color.fromARGB(255, 189, 2, 2),
+        primaryColor: const Color.fromARGB(255, 189, 2, 2),
         fontFamily: 'Georgia',
         textTheme: const TextTheme(
           headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
@@ -26,8 +39,47 @@ class MyApp extends StatelessWidget {
           bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
         ),
       ),
-      home: const MyHomePage(title: 'Titulo do app'),
+      initialRoute: '/',
+      routes: {
+        '/':(context) => Landing(),
+        '/login': (context) => LoginPage(),
+        '/home': (context) => const MyHomePage(title: "Parando")
+      }
     );
+  }
+}
+
+class Landing extends StatefulWidget {
+  @override
+  _LandingState createState() => _LandingState();
+}
+
+class _LandingState extends State<Landing> {
+  String _username = "";
+
+  @override void initState() {
+    super.initState();
+    Future<FirebaseApp> _firebase = loadFirebase();
+    _loadUserInfo();    
+  }
+
+  _loadUserInfo() async {
+    // TODO get username
+    if(_username == "") {
+      SchedulerBinding.instance?.addPostFrameCallback((_) {
+        Navigator.pushNamedAndRemoveUntil(context, '/home', ModalRoute.withName('/home'));
+      });
+    }
+    else {
+      SchedulerBinding.instance?.addPostFrameCallback((_) {
+        Navigator.pushNamedAndRemoveUntil(context, '/home', ModalRoute.withName('/home'));
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
 
@@ -73,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(child: _widgetOptions.elementAt(_navIndex),),
+      body: Container(child: _widgetOptions.elementAt(_navIndex),),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Consumo'),
@@ -154,7 +206,7 @@ class _ProfileState extends State<Profile>{
                       ))
                     
             ),
-            Container(
+            SizedBox(
               width: double.infinity,
               height: 350.0,
               child: Center(
@@ -196,7 +248,7 @@ class _ProfileState extends State<Profile>{
                       height: 50.0,
                     ),
                     Card(
-                      margin: EdgeInsets.symmetric(horizontal: 15.0,vertical: 3.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 3.0),
                       clipBehavior: Clip.antiAlias,
                       elevation: 2.0,
                       child: Padding(
@@ -205,7 +257,7 @@ class _ProfileState extends State<Profile>{
                           children: <Widget>[
                             Expanded(
                               child: Column(
-                                children: <Widget>[
+                                children: const <Widget>[
                                   Text(
                                     "Decidiu parar:",
                                     style: TextStyle(
@@ -227,7 +279,7 @@ class _ProfileState extends State<Profile>{
                             ),
                             Expanded(
                               child: Column(
-                                children: <Widget>[
+                                children: const <Widget>[
                                   Text(
                                     "Progresso:",
                                     style: TextStyle(
@@ -249,7 +301,7 @@ class _ProfileState extends State<Profile>{
                             ),
                             Expanded(
                               child: Column(
-                                children: <Widget>[
+                                children: const [
                                   Text(
                                     "Dias sem fumar:",
                                     style: TextStyle(
