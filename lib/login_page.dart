@@ -1,6 +1,10 @@
+import 'package:app/google_sign_in.dart';
 import 'package:app/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -12,11 +16,14 @@ class LoginPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Image(image: AssetImage('assets/images/placeholder_logo.png')),
-            ElevatedButton(
-              onPressed: () => {
-                Navigator.pushNamedAndRemoveUntil(context, '/home', ModalRoute.withName('/home'))
+            ElevatedButton.icon(
+              onPressed: () {
+                final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
+                provider.googleLogin();
+                // Navigator.pushNamedAndRemoveUntil(context, '/home', ModalRoute.withName('/home'))
               },
-              child: Text("Login"),
+              icon: FaIcon(FontAwesomeIcons.google, color: Colors.red),
+              label: Text("Sign in with Google"),
             ),
             ElevatedButton(
               onPressed: () => {
