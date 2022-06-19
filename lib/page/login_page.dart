@@ -1,4 +1,4 @@
-import 'package:app/google_sign_in.dart';
+import 'package:app/utils/google_sign_in.dart';
 import 'package:app/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
