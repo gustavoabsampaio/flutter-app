@@ -1,5 +1,8 @@
+import 'package:app/db/app_database.dart';
+import 'package:app/model/entry.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:core';
 import 'package:intl/intl.dart';
 
@@ -11,7 +14,9 @@ class UserEntries extends StatefulWidget {
 }
 
 class _UserEntriesState extends State<UserEntries> {
-  final List<String> _entryList = ["entry 1", "entry 2", "entry 3", "entry 4"];
+  late List<Entry> entryList;
+  bool isLoading = false;
+  final quantidadeInputController = TextEditingController();
 
   var _tapPosition;
   DateTime _dateTime = DateTime.now();
@@ -20,32 +25,46 @@ class _UserEntriesState extends State<UserEntries> {
   @override
   void initState() {
     super.initState();
+
+    refreshEntries();
+
     _tapPosition = const Offset(0.0, 0.0);
+
+  }
+
+  Future refreshEntries() async {
+    setState(() {
+      isLoading = true;
+    });
+    this.entryList = await AppDatabase.instance.readAllEntries();
+
+    setState((() => isLoading = false));
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
-        children: [
-          Column(
-            children:[
+        children: 
+          [Column(
+            children: isLoading? [CircularProgressIndicator()]:  entryList.isEmpty
+                                                             ? [const Text('Sem entradas')] :[
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16.0),
-                  itemCount: _entryList.length,
+                  itemCount: entryList.length,
                   itemBuilder: (context, i) {
                     return GestureDetector(
                       onTapDown: _storeTapPosition,
                       onLongPress: () {
-                        _showPopupMenu();
+                        _showPopupMenu(entryList[i].id);
                       },
                       child: Card (
                         child: Column(
                           children: [
                             Padding(
                               padding: EdgeInsets.fromLTRB(3.0, 15.0, 3.0, 15.0),
-                              child: Text(_entryList[i]),
-                              ),
+                              child: Text('Quantidade: ' + entryList[i].quantidade.toString()+ '      Data: ' + formatter.format(entryList[i].data as DateTime)),
+                            ),
                           ]                  
                         )
                       )
@@ -72,14 +91,19 @@ class _UserEntriesState extends State<UserEntries> {
                               child: Column(
                                 children: <Widget>[
                                   TextFormField(
+                                    controller: quantidadeInputController,
                                     decoration: const InputDecoration(
                                       labelText: 'Quantidade',
                                     ),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                   ),
                                   Row(
                                     children: <Widget>[
                                       Text(
-                                        formatter.format(_dateTime as DateTime)
+                                        formatter.format(_dateTime as DateTime),
                                       ),
                                       const Padding(
                                         padding: EdgeInsets.fromLTRB(80, 0, 0, 0)
@@ -91,7 +115,7 @@ class _UserEntriesState extends State<UserEntries> {
                                             context: context, 
                                             initialDate: _dateTime, 
                                             firstDate: DateTime(2021), 
-                                            lastDate: DateTime(2121)
+                                            lastDate: DateTime.now()
                                           ).then((date) {
                                             setStateForDialog(() {
                                               if(date != null){
@@ -111,7 +135,12 @@ class _UserEntriesState extends State<UserEntries> {
                             ElevatedButton(
                                 child: const Text("Adicionar"),
                                 onPressed: () {
-                                  // adiciona entrada
+                                  AppDatabase.instance.create(Entry(quantidade: int.parse(quantidadeInputController.text), data: _dateTime));
+                                  quantidadeInputController.clear();
+                                  _dateTime = DateTime.now();
+                                  refreshEntries();
+                                  Navigator.pop(context);
+                                  
                                 })
                           ],
                         );
@@ -126,8 +155,8 @@ class _UserEntriesState extends State<UserEntries> {
         ],        
     );
   }
-  
-  _showPopupMenu() async {
+
+  _showPopupMenu(int? id) async {
     final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
 
     await showMenu(
@@ -137,11 +166,16 @@ class _UserEntriesState extends State<UserEntries> {
           Offset.zero & overlay.size
         ),
       items: [
-        const PopupMenuItem(
-          child: Text("Edit")
-        ),
-        const PopupMenuItem(
-          child: Text("Delete")
+        // PopupMenuItem(
+        //   child: Text("Edit"),
+        //   // onTap: ,
+        // ),
+        PopupMenuItem(
+          child: Text("Delete"),
+          onTap: () {
+            AppDatabase.instance.delete(id!);
+            refreshEntries();
+          },
         )
       ]
     );

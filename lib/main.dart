@@ -1,11 +1,11 @@
-import 'package:app/google_sign_in.dart';
-import 'package:app/login_page.dart';
-import 'package:app/profile.dart';
+import 'package:app/utils/google_sign_in.dart';
+import 'package:app/page/login_page.dart';
+import 'package:app/page/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-import 'user_entries.dart';
+import 'page/user_entries.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'dart:io';
