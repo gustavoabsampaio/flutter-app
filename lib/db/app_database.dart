@@ -61,6 +61,88 @@ class AppDatabase {
     }
   }
 
+  Future<Entry> getNewest() async { 
+    try {
+      Future<Entry> newest = _getNewestOrOldest(true);
+      return newest;
+    } catch(e){
+      rethrow;
+    }
+  }
+  
+  Future<Entry> getOldest() async { 
+    try {
+      Future<Entry> oldest = _getNewestOrOldest(false);
+      return oldest;
+    } catch(e){
+      rethrow;
+    }
+  }
+
+  Future<Entry> _getNewestOrOldest(bool newest) async {
+    final db = await instance.database;
+    var orderBy = '${EntryFields.data} DESC';
+
+    if(newest) {
+      orderBy = '${EntryFields.data} ASC';
+    }
+
+    final maps = await db.query(
+      tableEntries,
+      columns: EntryFields.values,
+      limit: 1,
+      orderBy: orderBy
+    );
+
+    if(maps.isNotEmpty) {
+      return Entry.fromJson(maps.first);
+    } else {
+      throw Exception('No entries');
+    }
+  }
+
+  Future<int> numDiasFumou() async {
+    final db = await instance.database;
+    final result = await db.rawQuery('SELECT distinct data FROM entries');
+    final count = result.length;
+
+    if(count > 0) {
+      return count;
+    } else {
+      throw Exception('No entries');
+    }
+  }
+
+  Future<Duration> numDiasSemFumarAtual() async {
+    Entry newest = await getNewest();
+    final DateTime data = newest.data;
+
+    final diasSemFumar = DateTime.now().difference(data);
+
+    if(diasSemFumar.inDays >= 0) {
+      return diasSemFumar;
+    } else {
+      throw Exception('No entries');
+    }
+  }
+ 
+  Future<int> numDiasSemFumarTotal() async {
+    try {
+      Entry oldest = await getOldest();
+      final diasFumou = await numDiasFumou();
+
+      final DateTime data = oldest.data;
+      final diasTotais = DateTime.now().difference(data);
+
+      final diasSemFumar = diasTotais.inDays - diasFumou;
+
+      return diasSemFumar;
+    } catch(e) {
+      rethrow;
+    }
+  }
+
+
   Future<int> update(Entry entry) async {
     final db = await instance.database;
 
