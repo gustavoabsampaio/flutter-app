@@ -83,7 +83,7 @@ class AppDatabase {
     final db = await instance.database;
     var orderBy = '${EntryFields.data} DESC';
 
-    if(newest) {
+    if(!newest) {
       orderBy = '${EntryFields.data} ASC';
     }
 
@@ -103,24 +103,10 @@ class AppDatabase {
 
   Future<int> numDiasFumou() async {
     final db = await instance.database;
-    final result = await db.rawQuery('SELECT distinct data FROM entries');
-    final count = result.length;
+    final result = await db.rawQuery('SELECT count(distinct data) FROM entries');
 
-    if(count > 0) {
-      return count;
-    } else {
-      throw Exception('No entries');
-    }
-  }
-
-  Future<Duration> numDiasSemFumarAtual() async {
-    Entry newest = await getNewest();
-    final DateTime data = newest.data;
-
-    final diasSemFumar = DateTime.now().difference(data);
-
-    if(diasSemFumar.inDays >= 0) {
-      return diasSemFumar;
+    if(Sqflite.firstIntValue(result)! > 0) {
+      return Sqflite.firstIntValue(result)!;
     } else {
       throw Exception('No entries');
     }
@@ -136,7 +122,13 @@ class AppDatabase {
 
       final diasSemFumar = diasTotais.inDays - diasFumou;
 
-      return diasSemFumar;
+      if (diasSemFumar > 0){
+        return diasSemFumar + 1;
+      }
+      else {
+        return 0;
+      }
+      
     } catch(e) {
       rethrow;
     }

@@ -36,7 +36,8 @@ class _UserEntriesState extends State<UserEntries> {
     setState(() {
       isLoading = true;
     });
-    this.entryList = await AppDatabase.instance.readAllEntries();
+    
+    entryList = await AppDatabase.instance.readAllEntries();
 
     setState((() => isLoading = false));
   }
@@ -46,7 +47,7 @@ class _UserEntriesState extends State<UserEntries> {
     return Stack(
         children: 
           [Column(
-            children: isLoading? [CircularProgressIndicator()]:  entryList.isEmpty
+            children: isLoading? [const CircularProgressIndicator()]:  entryList.isEmpty
                                                              ? [const Text('Sem entradas')] :[
               Expanded(
                 child: ListView.builder(
@@ -62,8 +63,8 @@ class _UserEntriesState extends State<UserEntries> {
                         child: Column(
                           children: [
                             Padding(
-                              padding: EdgeInsets.fromLTRB(3.0, 15.0, 3.0, 15.0),
-                              child: Text('Quantidade: ' + entryList[i].quantidade.toString()+ '      Data: ' + formatter.format(entryList[i].data as DateTime)),
+                              padding: const EdgeInsets.fromLTRB(3.0, 15.0, 3.0, 15.0),
+                              child: Text('Quantidade: ' + entryList[i].quantidade.toString()+ '      Data: ' + formatter.format(entryList[i].data)),
                             ),
                           ]                  
                         )

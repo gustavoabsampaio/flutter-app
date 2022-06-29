@@ -105,11 +105,18 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text("Parando"),
         actions: [
           TextButton(
-            onPressed: () {
-              final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
-              provider.logout();
+            onPressed: () async {
+              print(user.isAnonymous);
+              if(user.isAnonymous){
+                await FirebaseAuth.instance.signOut();
+                // Navigator.pushNamedAndRemoveUntil(context, '/login', ModalRoute.withName('/login'));
+              }
+              else {
+                final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
+                provider.logout();
+              }
             },
-            child: Text('Logout')
+            child: user.isAnonymous? Text('Login'): Text('Logout')
           )
         ],
       ),
