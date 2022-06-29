@@ -1,3 +1,4 @@
+import 'package:app/page/counter.dart';
 import 'package:app/utils/google_sign_in.dart';
 import 'package:app/page/login_page.dart';
 import 'package:app/page/profile.dart';
@@ -89,6 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
   
   static const List<Widget> _widgetOptions = <Widget>[
     UserEntries(),
+    Counter(),
     Profile()
   ];
 
@@ -124,6 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Consumo'),
+          BottomNavigationBarItem(icon: Icon(Icons.timer), label: 'Tempo'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
         currentIndex: _navIndex,

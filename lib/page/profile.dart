@@ -71,6 +71,10 @@ class _ProfileState extends State<Profile>{
 
     porcentagemSemFumar = (DateTime.now().difference(installDate).inDays - numDiasFumou)/DateTime.now().difference(installDate).inDays*100;
 
+    if (porcentagemSemFumar < 0) {
+      porcentagemSemFumar = 0;
+    }
+
     setState((() => isLoading = false));
   }
 
